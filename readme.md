@@ -1,5 +1,5 @@
 
-# vwCropper - a component for im-place image cropping
+# vwCropper - a component for in-place image cropping
 
 todo: demo movie
 
