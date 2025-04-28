@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Cropper</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        overflow: hidden;
+        background-color: #f0f0f0;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      #container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        background-color: #0099CC;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      button:hover {
+        background-color: #007799;
+      }
+      button.active {
+        background-color: #007799;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .zoom-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: 10px;
+        padding: 4px;
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .zoom-controls button {
+        padding: 4px 8px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+      #zoomLevel {
+        min-width: 60px;
+        text-align: center;
+        font-size: 14px;
+      }
+      #preview {
+        max-width: 300px;
+        max-height: 300px;
+        display: none;
+        border: 2px solid #0099CC;
+        border-radius: 4px;
+      }
+      .separator {
+        width: 1px;
+        height: 24px;
+        background-color: #ddd;
+        margin: 0 10px;
+      }
+      select {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        background-color: white;
+        cursor: pointer;
+      }
+      select:hover {
+        border-color: #0099CC;
+      }
+      .ratio-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+    </style>
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="container"></div>
+    </div>
+    <script type="module" src="./boot.js"></script>
+  </body>
+</html>

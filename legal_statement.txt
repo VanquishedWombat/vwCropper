@@ -1,0 +1,11 @@
+/*
+Copyright (c) Vanquished Wombat Services Limited 2024. All rights reserved.
+
+This is licensed software; you may not use this file except in compliance with 
+the License.
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+*/
