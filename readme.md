@@ -1,11 +1,13 @@
 
-# vwCropper is an add-on component for cropping and scaling the images in-place.
+# vwCropper - a component for im-place image cropping
 
 todo: demo movie
 
 ## Creating a vwCropper
 
 A single vwCropper instance is all that is needed to power image cropping for all the images on your Konva canvas.
+
+To make a cropper instantiate a new `vwCropper` - not the config object used at instantiation differs from the one in the `cropper.init()` - see below.
 
 
 ```js
@@ -97,6 +99,12 @@ document.getElementById("okButton").addEventListener("click", function (e) {
 
 })
 ```
+
+## Serialization
+
+The vwCropper sets the Konva.Image.crop() attribute of the images it operates on. Therefore, to re-apply the crop when the stage is re-loaded, save and re-apply the crop attribute value.
+
+
 
 ## Performance
 
