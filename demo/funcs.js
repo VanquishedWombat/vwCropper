@@ -47,8 +47,8 @@ export const stage = new Konva.Stage({
 
     // Create layer
     layer = new Konva.Layer({
-      x: 11,
-      y: -10,
+      x: 40,
+      y: 40,
     }),
 
     imageGroup = new Konva.Group({
@@ -64,6 +64,17 @@ export const stage = new Konva.Stage({
       draggable: true,
       image: undefined,
     //   rotation: 10
+    }),
+
+
+    rect = new Konva.Rect({
+      x: 300,
+      y: 200,
+      width: 200,
+      height: 100,
+      fill: 'blue',
+      opacity: 1,
+      draggable: true
     }),
 
     circle1 = new Konva.Circle({
@@ -82,9 +93,10 @@ export const stage = new Konva.Stage({
     }),
 
     transformer = new Konva.Transformer({
-      enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right']
+      enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+      keepRatio: true
     });
       
 stage.add(layer);
-layer.add(circle1, imageGroup, circle2, transformer);
+layer.add(circle1, imageGroup, circle2, rect, transformer);
 imageGroup.add(imageShape);
