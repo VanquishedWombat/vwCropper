@@ -5,7 +5,7 @@ todo: demo movie
 
 ## Creating a vwCropper
 
-A single vwCropper instance is all that is needed to power image cropping for all the images on your Konva canvas.
+A single vwCropper instance is all that is needed to power image cropping for all the Konva.Paths on your Konva canvas.
 
 To make a cropper instantiate a new `vwCropper` - note the config object used at instantiation differs from the one in the `cropper.init()` - see below.
 
