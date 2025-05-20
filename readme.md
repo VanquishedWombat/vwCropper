@@ -1,3 +1,20 @@
+# Changes
+
+1. Breaking change: init parameter `path` is changed to `node`
+
+```js
+// to start a cropping session on a Konva Path shape
+cropper.init({
+    node: myNode
+})  
+...
+```
+
+2. vwCropper now supports most types of Konva.Shape that support the `fillpatternImage` attrs.
+
+
+
+----
 
 # vwCropper - a component for in-place image cropping
 
@@ -5,9 +22,9 @@ todo: demo movie
 
 ## Creating a vwCropper
 
-A single vwCropper instance is all that is needed to power image cropping for all the Konva.Paths on your Konva canvas.
+A single vwCropper instance is all that is needed to power image cropping for any Konva.Shape that supports fillPatternImage.
 
-To make a cropper instantiate a new `vwCropper` - note the config object used at instantiation differs from the one in the `cropper.init()` - see below.
+To make a cropper instantiate a new `vwCropper` - note the config object used at instantiation differs from the one in the `cropper.init()` - see below. The target shape is locked and a cropper appears around it allowing the user to select all or part of an image by positioning and scaling the image until the desired area of the image is on view.
 
 
 ```js
@@ -15,41 +32,42 @@ To make a cropper instantiate a new `vwCropper` - note the config object used at
 const cropper = new vwCropper({license: "<license code or blank for demo>"})
 
 // to start a cropping session on a Konva Path shape
-
 cropper.init({
-    path: myPath
+    node: myNode
 })  
  
 // or via the image double-click event
 myPath.on('dblclick', function(){
     cropper.init({
-        path: myPath
+        node: myNode
     })  
 })
 
 ```
 
-## Why Konva.Path and not Konva.Image?
+## Why Konva.Node and not Konva.Image?
 
-The Konva.Path can contain images via thefillPatternImage attribute. This supports all the capabilities needed to make a cropper. A path can eb used to make rectangles which mimic images, but it can also make rounded-corner rectangles, stars, elipses, polygons, and any shape you care to dream up. As long as the path is closed, the vwCropper will let you crop an image into the closed path.
+Many Konva.Nodes can contain images via the fillPatternImage attribute. This supports all the capabilities needed to make a cropper. 
 
-Konva.Images do not have rounded corners, and you can't make them into random shapes. So we use the Konva.Path.
+You can use Konva.Rect, Konva.Circle, Konva.RegularPolygon. Konva.Star, Konva.Path and many of the other types of Konva shapes.
 
-todo: example paths.
+Notably, the Konva.Path can be used to make rectangles which mimic images, but it can also make rounded-corner rectangles, stars, elipses, polygons, and any shape you care to dream up. As long as the path is closed, the vwCropper will let you crop an image into the closed path.
 
+
+todo: examples.
 
 
 # Direct methods
 
 ## init() 
 
-As has been seen in the demo code above, `init()` is our way to tell vwCropper to focus on a specific Path. It requires a single argument which is a configuration object that must have at least the `image` value set to a Konva.Image.
+As has been seen in the demo code above, `init()` is our way to tell vwCropper to focus on a specific Konva.Node. It requires a single argument which is a configuration object that must have at least the `node` value set to a type of Konva.Shape that supports fillPatternImage.
 
 All of the other keys of the configuration object are optional and are described below:
 
 ```js
 export type initConfig = {
-    path: Konva.Path;  // the target Konva.Path for the cropping activity
+    node: Konva.Node;  // the target Konva.Path for the cropping activity
     keepRatio?: boolean;  // whether to keep the aspect ratio of the image
     useOverlay?: boolean;  // whether to use an overlay
     overlayClickAction?: 'Cancel' | 'Complete';  // what action to take when the overlay is clicked
@@ -78,7 +96,7 @@ const cropper = new vwCropper({license: "<license code or blank for demo>"})
 
 // start a cropping session
 cropper.init({
-    path: myPath
+    node: myNode
 })  
  
 // Store the crop info  
@@ -99,7 +117,7 @@ const cropper = new vwCropper({license: "<license code or blank for demo>"})
 
 // start a cropping session
 cropper.init({
-    path: myPath
+    node: myNode
 })  
  
 // cancel the crop session.
@@ -110,9 +128,66 @@ document.getElementById("okButton").addEventListener("click", function (e) {
 })
 ```
 
+## Static vwCropper.Cropper.setInitialFillPatternImage()
+
+This static method of the Cropper class is exposed to help set up your Konva shape with its initial fillPatternImage position. It is supplied because circle-based shapes such as Konva.Circle, Konva.Ring, Konva.RegularPolygon, etc, have their default `fillPatternOffset` matching their origin which is at their center and which is not the usual desired position for the image to appear.  
+
+The setInitialFillPatternImage() method requires as arguments the target node (mandatory) and an optional overflow percentage which defaults to 0.  Note that the code discovers the image being used from the `node.fillPatternImage` so be sure to have assigned this before calling this static method.
+
+What it does is to position and scale the fillPatternImage so that it covers the node. If the overflow percentage is set then the image is made this amount larger which can look better when the cropper starts up. 
+
+The aspect ratio of the image is used to ensure that the entire shape is covered by the image, and the center of the image is aligned with the center of the target node.
+
+Use of this method is optional. You are welcome to pre-set the `fillPattern` attributes as you require, but getting the fillPatternImage into the correct scale and offset requires some complicated coordinate space switching and you may find this a handy feature.
+
+
+```js
+// make the vwCropper instance
+const cropper = new vwCropper({license: "<license code or blank for demo>"})
+
+// make a kona image object and load an image into it.
+const img = new Image();
+img.onload = () => {
+
+
+    const pathShape = new Konva.Path({
+        data: 'M150,50 L184,131 L271,140 L202,196 L221,284 L150,240 L79,284 L98,196 L29,140 L116,131 Z',
+        x: 180,
+        y: 120,
+        width: 600,
+        height: 400,
+        stroke: 'black',
+        strokeWidth: 4,
+        draggable: true,
+        rotation: 45,
+        scale: {
+            x: 0.5,
+            y: 0.5
+        },
+        fillPatternRepeat: 'no-repeat',
+        fillPatternImage: img     
+    });
+
+    layer.add(pathShape)
+
+    // without needing to have instantiated a cropper we 
+    // can use this static method to intialise the image
+    // into the shape.
+    vwCropper.Cropper.setInitialFillPatternImage(pathShape)
+};
+const path  = "/src/assets/" + myImageName 
+img.src = path; // invokes the onload event above
+```
+
+
+
 ## Serialization
 
-The vwCropper sets the Konva.Path  `fillPatternOffet` and `fillPatternScale` attributes of the Konva.Path it operates on. Therefore, to re-apply the crop when the stage is re-loaded, save and re-apply the crop attribute value. 
+The vwCropper sets the Konva.Nodes standard `fillPatternOffet` and `fillPatternScale` attributes of the Konva.Node it operates on. Therefore, to re-apply the crop when the stage is re-loaded, save and re-apply these attribute value. 
+
+The image will appear as when the node data was saved, and the vwCropper will work as expected. 
+
+** Note: The Konva built-in serialization does not handle images. You need to handle image loading in your own code. **
 
 
 
@@ -130,7 +205,7 @@ Future developments could include:
 - apply mask
 - blur 0 - 100% default 0
 - brightness 0 - 100% default 50
-- border, color + width
+
 - corner radius: 0 - half shortest side.
 - shadow: offset x & y, color, opacity, blur
 
