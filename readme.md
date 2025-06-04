@@ -1,4 +1,58 @@
-# Changes
+
+
+
+# Release Notes
+
+# vwCropper 1.0.0.a4 Changes
+
+1. Breaking change: object name changed from 'Cropper' to 'Widget' in instantiation signature.
+
+```js
+const cropper = new vwCropper.Widget({license: "<license code or blank for demo>"})
+```
+
+2. Fixed isue with failing to hug bounds of main shape when scaled path stroke in use.
+
+3. Added callbacks / events named  [ "opened","completed", "canceled","closed"]. Pass in a config.callbacks object with key names matching the event names or use the `on("<event name>", function)` method for event listening.
+
+Callbacks example:
+
+```js
+cropper.init({
+    path: picNode, 
+    keepRatio: false,     
+    outerAnchorPadding: 10,
+    outerAnchorSize: 20,
+    outerAnchorRadius: 10,
+    overlayClickAction: 'cancel',
+    callbacks: {
+    opened: function(){
+        console.log('cropper opened - callback fired')
+    },
+    completed: function(){
+        console.log('cropper complete - callback fired')
+    },
+    canceled: function(){
+        console.log('cropped cancelled - callback fired')
+    },
+    closed: function(){
+        console.log('cropper closed - callback fired')
+    }
+    }
+})
+```
+
+## Important notes
+
+Note #1: The cropper can only police that the shape is enclosed in the image if this is the state when the cropper is intiialised.
+
+Note #2: To ensure image encloses the shape there is a config setting `config.initialWrap` (boolean), default `true`,  which will immediately reposition and scale the image to enclose the shape. The margin applied is store in `config.initialWrapMarginPC` which defaults to `10` (this is a percentage).  This may cause the image to move under the shape. Whilst this is not desireable UX, it will ONLY happen when the user opens the cropper for the shape, and this is point is probably a good time to fix the issue. meaning when the user is actively using the cropper to crop the image. 
+
+
+----------
+
+
+# vwCropper 1.0.0.a3 Changes
 
 1. Breaking change: init parameter `path` is changed to `node`
 
@@ -29,7 +83,7 @@ To make a cropper instantiate a new `vwCropper` - note the config object used at
 
 ```js
 // make a single vwCropper instance at page startup
-const cropper = new vwCropper({license: "<license code or blank for demo>"})
+const cropper = new vwCropper.Widget({license: "<license code or blank for demo>"})
 
 // to start a cropping session on a Konva Path shape
 cropper.init({
@@ -68,7 +122,9 @@ All of the other keys of the configuration object are optional and are described
 ```js
 export type initConfig = {
     node: Konva.Node;  // the target Konva.Path for the cropping activity
-    keepRatio?: boolean;  // whether to keep the aspect ratio of the image
+    initialWrap?: boolean;  // should we initiall wrap the image to enclose the shape if this is not the case?
+    initialWrapMarginPC?: number;  // the margin applied to the image when the initialWrap is true
+    keepRatio?: boolean;  // whether to keep the aspect ratio of the shape (image is always set to keep aspect ratio)
     useOverlay?: boolean;  // whether to use an overlay
     overlayClickAction?: 'Cancel' | 'Complete';  // what action to take when the overlay is clicked
     overlayFill?: string;  // the fill color of the overlay
@@ -92,7 +148,7 @@ The `vwCropper.complete()` method applies the crop set by the user to the target
 
 ```js
 // make the vwCropper instance
-const cropper = new vwCropper({license: "<license code or blank for demo>"})
+const cropper = new vwCropper.Widget({license: "<license code or blank for demo>"})
 
 // start a cropping session
 cropper.init({
@@ -113,7 +169,7 @@ The `vwCropper.cancel()` method cancels the crop set by the user and hides the v
 
 ```js
 // make the vwCropper instance
-const cropper = new vwCropper({license: "<license code or blank for demo>"})
+const cropper = new vwCropper.Widget({license: "<license code or blank for demo>"})
 
 // start a cropping session
 cropper.init({
@@ -143,7 +199,7 @@ Use of this method is optional. You are welcome to pre-set the `fillPattern` att
 
 ```js
 // make the vwCropper instance
-const cropper = new vwCropper({license: "<license code or blank for demo>"})
+const cropper = new vwCropper.Widget({license: "<license code or blank for demo>"})
 
 // make a kona image object and load an image into it.
 const img = new Image();

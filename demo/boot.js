@@ -1,4 +1,4 @@
-import * as vwCropper from '../dist/vwCropper-min-a3.js';
+import * as vwCropper from '../dist/vwCropper-min-a4.js';
 import { toolBarData as toolBarData1 } from './assets/buttonDataTop.js'
 import * as vwToolBar from './libs/vwToolBar-min.js' 
 import * as vwSelector from './libs/vwSelector-min.js';
@@ -65,7 +65,22 @@ function loadImage(imageName, imageRect, callback) {
           outerAnchorPadding: 10,
           outerAnchorSize: 20,
           outerAnchorRadius: 10,
-          overlayClickAction: 'cancel'
+          overlayClickAction: 'cancel',
+          callbacks: {
+            opened: function(){
+              console.log('cropper opened - callback fired')
+            },
+            completed: function(){
+              console.log('cropper complete - callback fired')
+            },
+            canceled: function(){
+              console.log('cropped cancelled - callback fired')
+            },
+            closed: function(){
+              console.log('cropper closed - callback fired')
+            }
+          }
+
         })
         toolLayer.moveToTop()
       })
@@ -136,7 +151,6 @@ window.onload = () => {
     stage.add(toolLayer)
 
     function callback (buttonEvent){
-        console.log('callback: received', buttonEvent)
     
         switch (buttonEvent.name){
 
@@ -170,15 +184,8 @@ window.onload = () => {
     toolLayer.moveToTop() 
 
     const  img = loadImage('smallcat.jpg', {x: 700, y: 200, width:200, height: 300})
-    
 
-    // const config = {
-    //   shape: imgShape,
-    //   cropperScale: 1.5, // the exposed cropped image is 1.5 times the size of the original image
-    //   cropperPosition: {x: 0, y: 0},  // outer image has this offset from the top-left of the visible image. 
-    // }
-  
-    cropper = new vwCropper.Cropper();
+    cropper = new vwCropper.Widget();
 
 
 }
