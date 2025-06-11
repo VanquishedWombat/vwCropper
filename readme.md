@@ -3,6 +3,40 @@
 
 # Release Notes
 
+# vwCropper 1.0.0.a5
+
+- breaking change: renamed init.path, initialWrap, initialWrapMarginPC as follows
+
+```js
+export type initConfig = {
+    shape?: Konva.Node;  // was path
+    initialFit?: boolean;  // was initialWrap
+    initialFitMarginPC?: number;  // was initialWrapMarginPC
+    ...
+```
+
+- breaking change - renamed static method vwCropper.Widget.setInitialFillPatternImage to static method vwCropper.Cropper.fit.
+
+- added static method vwCropper.Cropper.getFitInfo to return the tightest-fit info for the case where the image would be tightly wrapping the shape respecting aspect ratio. Returns an object containing the position, scale, and rotation of the image.
+
+- added mouse wheel zoom support.  Added following 2 new related config keys:
+
+```js
+    zoomAmount?: number, // the amount to zoom per mouse-wheel step default 1.1
+    zoomDirection?: number,  // the direction to zoom (1 for zoom in, -1 for zoom out)
+```
+
+Example
+```js
+export type initConfig = {
+    shape: myNode;  // was path
+    zoomAmount: 1.2, // the amount to zoom per mouse-wheel step default 1.1
+    zoomDirection: 1,  // the direction to zoom (1 for zoom in, -1 for zoom out)
+    ...
+```
+
+
+
 # vwCropper 1.0.0.a4 Changes
 
 1. Breaking change: object name changed from 'Cropper' to 'Widget' in instantiation signature.
@@ -19,7 +53,7 @@ Callbacks example:
 
 ```js
 cropper.init({
-    path: picNode, 
+    shape: picNode, 
     keepRatio: false,     
     outerAnchorPadding: 10,
     outerAnchorSize: 20,
@@ -121,9 +155,9 @@ All of the other keys of the configuration object are optional and are described
 
 ```js
 export type initConfig = {
-    node: Konva.Node;  // the target Konva.Path for the cropping activity
-    initialWrap?: boolean;  // should we initiall wrap the image to enclose the shape if this is not the case?
-    initialWrapMarginPC?: number;  // the margin applied to the image when the initialWrap is true
+    node: Konva.Node;  // the target Konva.Node for the cropping activity
+    initialFit?: boolean;  // should we initiall wrap the image to enclose the shape if this is not the case?
+    initialFitMarginPC?: number;  // the margin applied to the image when the initialFit is true
     keepRatio?: boolean;  // whether to keep the aspect ratio of the shape (image is always set to keep aspect ratio)
     useOverlay?: boolean;  // whether to use an overlay
     overlayClickAction?: 'Cancel' | 'Complete';  // what action to take when the overlay is clicked
@@ -184,9 +218,9 @@ document.getElementById("okButton").addEventListener("click", function (e) {
 })
 ```
 
-## Static vwCropper.Cropper.setInitialFillPatternImage()
+## Static vwCropper.Widget.setInitialFillPatternImage()
 
-This static method of the Cropper class is exposed to help set up your Konva shape with its initial fillPatternImage position. It is supplied because circle-based shapes such as Konva.Circle, Konva.Ring, Konva.RegularPolygon, etc, have their default `fillPatternOffset` matching their origin which is at their center and which is not the usual desired position for the image to appear.  
+This static method of the Widget class is exposed to help set up your Konva shape with its initial fillPatternImage position. It is supplied because circle-based shapes such as Konva.Circle, Konva.Ring, Konva.RegularPolygon, etc, have their default `fillPatternOffset` matching their origin which is at their center and which is not the usual desired position for the image to appear.  
 
 The setInitialFillPatternImage() method requires as arguments the target node (mandatory) and an optional overflow percentage which defaults to 0.  Note that the code discovers the image being used from the `node.fillPatternImage` so be sure to have assigned this before calling this static method.
 
@@ -229,7 +263,7 @@ img.onload = () => {
     // without needing to have instantiated a cropper we 
     // can use this static method to intialise the image
     // into the shape.
-    vwCropper.Cropper.setInitialFillPatternImage(pathShape)
+    vwCropper.Widget.setInitialFillPatternImage(pathShape)
 };
 const path  = "/src/assets/" + myImageName 
 img.src = path; // invokes the onload event above

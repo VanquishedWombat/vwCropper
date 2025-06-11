@@ -1,14 +1,17 @@
-import * as vwCropper from '../dist/vwCropper-min-a4.js';
+import * as vwCropper from '../dist/vwCropper-min.1.0.0.a5.js';
 import { toolBarData as toolBarData1 } from './assets/buttonDataTop.js'
 import * as vwToolBar from './libs/vwToolBar-min.js' 
-import * as vwSelector from './libs/vwSelector-min.js';
 
-import {stage, layer, transformer, imageShape, getAspectFitSize } from "./funcs.js"
+import {stage, layer, transformer, getAspectFitSize, shapes, images, shapeRect } from "./bootFuncs.js"
  
-let cropper, toolLayer;
- let imageName = ''
 
-function loadImage(imageName, imageRect, callback) {
+
+let cropper, toolLayer;
+
+let shapeName = 'circle'
+let imageName = 'cat'
+
+function loadImage(shapeName, imageName, shapeRect, callback) {
    console.log('boot: loadImage starts', arguments)
 
   // make a kona image object and load an image into it.
@@ -17,51 +20,40 @@ function loadImage(imageName, imageRect, callback) {
 
 
       // We want to mainain the aspect ratio of the image 
-      const { width, height } = getAspectFitSize(img.naturalWidth, img.naturalHeight, imageRect.width, imageRect.height);
+      const { width, height } = getAspectFitSize(img.naturalWidth, img.naturalHeight, shapeRect.width, shapeRect.height);
     
       if (callback) {
         callback(img)
       }
-  
-      const circle2 = stage.findOne('.circle2')
-      circle2.moveToTop()
+
+      let picNode = shapes[shapeName]      
+
+      layer.add(picNode)
+      picNode.fillPatternImage(img)
+      picNode.draggable(true)
+      // picNode.rotation(45)
  
 
-      const pathShape = new Konva.Path({
-        // star
-        data: 'M150,50 L184,131 L271,140 L202,196 L221,284 L150,240 L79,284 L98,196 L29,140 L116,131 Z',
-        // various rects with offsets
-        // data: 'M 50 50 L 350 50 L 350 210 L 50 210 Z',
-        // data: 'M 150 150 L 450 150 L 450 310 L 150 310 Z',
-        // data: 'M 0 0 L 350 0 L 350 210 L 0 210 Z',
-        // triangle
-        // data: 'M 0 0 L 350 0 L 350 210 Z',
-        x: imageRect.x,
-        y: imageRect.y,
-        width: width,
-        height: height,
-        stroke: 'black',
-        strokeWidth: 4,
-        draggable: true,
-        rotation: 0,
-        scale: {
-          x: 0.5,
-          y: 0.5
-        }
-      });
-
-      pathShape.fillPatternImage(img)
-
-      layer.add(pathShape)
-
- 
-      pathShape.on('click', function(){
-        transformer.nodes([pathShape])
+      layer.add(picNode)
+      picNode.on('click', function(){
+        transformer.nodes([picNode])
       })
 
-      pathShape.on('dblclick', function(){
+      layer.add(picNode)
+
+ 
+      picNode.on('click', function(e){
+        transformer.nodes([picNode])
+      })
+
+      picNode.on('dblclick', function(){
+
+        // testing static getFontInfo
+        const fitInfo = vwCropper.Widget.getFitInfo(picNode)
+
         cropper.init({
-          path: pathShape,         
+          shape: picNode, 
+          keepRatio: false,     
           outerAnchorPadding: 10,
           outerAnchorSize: 20,
           outerAnchorRadius: 10,
@@ -80,59 +72,54 @@ function loadImage(imageName, imageRect, callback) {
               console.log('cropper closed - callback fired')
             }
           }
-
         })
         toolLayer.moveToTop()
       })
  
+      // vwCropper.Cropper.setInitialFillPatternImage(picNode, 20)
+
+      const circle1 = stage.findOne('.circle1')
+      if (circle1){
+        circle1.moveToTop()
+      }
+
+      const circle2 = stage.findOne('.circle2')
+      if (circle2){
+        circle2.moveToTop()
+      }
 
       // end of onload event
 
 };
-const path  = "./assets/" + imageName 
-img.src = path; // invokes the onload event
+
+console.log('load image named ', imageName)
+
+const src = images[imageName];
+console.log('loading image', src)
+img.src = src; // invokes the onload event
 return img
 }
 
+ 
+function setup(initialImageName){
 
 
 
 
-window.onload = () => {
+
 
     // Make a toolbar and add it to the stage. This is for dev only as the features that it provides will be done by external buttons of the Vue app. 
     const vwController = new vwToolBar.Controller({license: "0018029085707B6B7C367364001A044E3C2E452142283D4D3E", id:'tb1'})
     // vwToolBar.Utility.logKey.push("*") 
 
-    // Set up the selector rect
-    const selector = new vwSelector.Selector()
-    vwSelector.Utility.logKey.push("*")
-
-    selector.init({
-      layer: layer,   
-      callbacks: {
-          mousedown: function(e, rect) {
-              console.log('mousedown', e, rect)
-          },
-          mousemove: function(e, rect) {
-              console.log('mousemove', e, rect)
-          },
-          mouseup: function(e, rect) {
-              console.log('mouseup', e, rect)
-              rect.width = Math.max(10, rect.width)
-              rect.height = Math.max(10, rect.height)
-              loadImage(imageName, rect)
-
-          }
-      }
-    })
 
 
-        // Mouse move tracking. 
+    // Mouse move tracking. 
     // todo: make this take account of scaling applied inside planner. 
     stage.on('mousemove', (e) => {
 
-      const mousePos = cropper.getMousePos()
+      // const mousePos = cropper.getMousePos()
+      const mousePos = layer.getRelativePointerPosition()
 
       showPos(mousePos.x + ", " + mousePos.y)
     })
@@ -151,14 +138,10 @@ window.onload = () => {
     stage.add(toolLayer)
 
     function callback (buttonEvent){
+        console.log('callback: received', buttonEvent)
     
         switch (buttonEvent.name){
-
-          case "newImage":
-            selector.start()
-            imageName = buttonEvent.value
-            break;
-
+ 
           case "completeCrop":
             
             cropper.complete()
@@ -169,6 +152,21 @@ window.onload = () => {
             cropper.cancel()
 
             break;
+
+          case "shape":
+
+
+          shapeName = buttonEvent.value
+          loadImage(shapeName, imageName, shapeRect)
+
+            break
+
+          case "image":
+
+            imageName = buttonEvent.value
+            loadImage(shapeName, imageName, shapeRect)
+
+            break
 
           case "size":
             
@@ -183,9 +181,21 @@ window.onload = () => {
 
     toolLayer.moveToTop() 
 
-    const  img = loadImage('smallcat.jpg', {x: 700, y: 200, width:200, height: 300})
-
+    // const  img = loadImage('smallcat.jpg', shapeRect)
+    
     cropper = new vwCropper.Widget();
 
+    if (initialImageName){
+      const initialIShapeName = 'circle'
+        loadImage(initialIShapeName, initialImageName,  shapeRect)
+    }
 
+}
+
+window.onload = () => {
+
+
+
+
+  setup('cat')
 }
