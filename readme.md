@@ -13,6 +13,7 @@ export type initConfig = {
     initialFit?: boolean;  // was initialWrap
     initialFitMarginPC?: number;  // was initialWrapMarginPC
     ...
+}
 ```
 
 - breaking change - renamed static method vwCropper.Widget.setInitialFillPatternImage to static method vwCropper.Cropper.fit.
