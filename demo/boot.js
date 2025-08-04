@@ -1,4 +1,4 @@
-import * as vwCropper from '../dist/vwCropper-min.1.0.0.a6.js';
+import * as vwCropper from '../dist/vwCropper-min.1.0.0.a7.js';
 import { toolBarData as toolBarData1 } from './assets/buttonDataTop.js'
 import * as vwToolBar from './libs/vwToolBar-min.js' 
 

@@ -1,5 +1,11 @@
 # Release Notes
 
+
+# Release 1.0.0.a7
+
+- fixed: stickiness issue when dragging background image after attempting to drag beyond edge of target image.  
+
+
 # vwCropper 1.0.0.a6
 
 - fixed: issues around `initialFit` behaviour. Note that the developer must handle setting `initialFit` to the appropriate shapes when they are first given to vwCopper as  vwCropper has no state or memory that it has been applied to a shape, either in the current editing session or after save & reload of the stage. 
