@@ -1,7 +1,13 @@
-
-
-
 # Release Notes
+
+# vwCropper 1.0.0.a6
+
+- fixed: issues around `initialFit` behaviour. Note that the developer must handle setting `initialFit` to the appropriate shapes when they are first given to vwCopper as  vwCropper has no state or memory that it has been applied to a shape, either in the current editing session or after save & reload of the stage. 
+
+- fixed: issue whereby shape aspect ratio was not maintained when anchors met the outer border or the shape min size.
+
+- various other minor bug fixes
+
 
 # vwCropper 1.0.0.a5
 

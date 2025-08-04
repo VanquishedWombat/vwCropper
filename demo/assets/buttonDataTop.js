@@ -41,7 +41,6 @@ const groupData = {
                 {id: 'Decrease', label: 'Decrease', propName: 'size', value: 'decrease', tip: 'Decrease image size'},
                 {id: 'Increase', label: 'Increase', propName: 'size', value: 'increase', tip: 'Increase image size'},
                 {id: 'txtPosInfo', label: 'Position: (0, 0)',  template: 'Position: (${value})', name: "mousePos", width: 140},   
-
             ]            
         }
     ]

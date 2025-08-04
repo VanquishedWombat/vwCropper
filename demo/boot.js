@@ -1,4 +1,4 @@
-import * as vwCropper from '../dist/vwCropper-min.1.0.0.a5.js';
+import * as vwCropper from '../dist/vwCropper-min.1.0.0.a6.js';
 import { toolBarData as toolBarData1 } from './assets/buttonDataTop.js'
 import * as vwToolBar from './libs/vwToolBar-min.js' 
 
@@ -8,10 +8,10 @@ import {stage, layer, transformer, getAspectFitSize, shapes, images, shapeRect }
 
 let cropper, toolLayer;
 
-let shapeName = 'circle'
+let shapeName = 'rect'
 let imageName = 'cat'
 
-function loadImage(shapeName, imageName, shapeRect, callback) {
+function  loadImage(shapeName, imageName, shapeRect, callback) {
    console.log('boot: loadImage starts', arguments)
 
   // make a kona image object and load an image into it.
@@ -31,7 +31,6 @@ function loadImage(shapeName, imageName, shapeRect, callback) {
       layer.add(picNode)
       picNode.fillPatternImage(img)
       picNode.draggable(true)
-      // picNode.rotation(45)
  
 
       layer.add(picNode)
@@ -41,19 +40,21 @@ function loadImage(shapeName, imageName, shapeRect, callback) {
 
       layer.add(picNode)
 
- 
       picNode.on('click', function(e){
         transformer.nodes([picNode])
       })
 
-      picNode.on('dblclick', function(){
+      const actions = function(picNode){
+        
 
-        // testing static getFontInfo
-        const fitInfo = vwCropper.Widget.getFitInfo(picNode)
+      // check if the initialFit already ran
+      let useInit = picNode.getAttr('cropperInitDone')
+      useInit = (typeof useInit === 'undefined') ? true : false        
 
         cropper.init({
           shape: picNode, 
-          keepRatio: false,     
+          initialFit: useInit,
+          initialFitMarginPC: 0,
           outerAnchorPadding: 10,
           outerAnchorSize: 20,
           outerAnchorRadius: 10,
@@ -74,10 +75,13 @@ function loadImage(shapeName, imageName, shapeRect, callback) {
           }
         })
         toolLayer.moveToTop()
+      }
+      picNode.on('dblclick', function(){
+
+      actions(picNode)
+
       })
  
-      // vwCropper.Cropper.setInitialFillPatternImage(picNode, 20)
-
       const circle1 = stage.findOne('.circle1')
       if (circle1){
         circle1.moveToTop()
@@ -88,6 +92,7 @@ function loadImage(shapeName, imageName, shapeRect, callback) {
         circle2.moveToTop()
       }
 
+      actions(picNode)
       // end of onload event
 
 };
@@ -105,12 +110,8 @@ function setup(initialImageName){
 
 
 
-
-
-
     // Make a toolbar and add it to the stage. This is for dev only as the features that it provides will be done by external buttons of the Vue app. 
-    const vwController = new vwToolBar.Controller({license: "0018029085707B6B7C367364001A044E3C2E452142283D4D3E", id:'tb1'})
-    // vwToolBar.Utility.logKey.push("*") 
+    const vwController = new vwToolBar.Controller({license: "00180672874881617C5C6F8E001A01424A4051392C48214523", id:'tb1'})
 
 
 
@@ -142,9 +143,28 @@ function setup(initialImageName){
     
         switch (buttonEvent.name){
  
-          case "completeCrop":
+          case "flipX":
             
+            cropper.flipX()
+            break;
+
+          case "flipY":
+            
+            cropper.flipY()
+            break;
+
+          case "flipXY":
+            
+            cropper.flipXY()
+            break;
+
+          case "completeCrop":
+
+            const myShape = cropper.config.shape
+            myShape.setAttr('cropperInitDone', true)
             cropper.complete()
+
+
             break;
 
           case "cancelCrop":
@@ -183,10 +203,11 @@ function setup(initialImageName){
 
     // const  img = loadImage('smallcat.jpg', shapeRect)
     
-    cropper = new vwCropper.Widget();
+    cropper = new vwCropper.Widget({license: "0018067287378461808A738E001A01424A4051392C48214522"});
 
+    // show the first image
     if (initialImageName){
-      const initialIShapeName = 'circle'
+      const initialIShapeName = shapeName; 
         loadImage(initialIShapeName, initialImageName,  shapeRect)
     }
 
@@ -194,8 +215,6 @@ function setup(initialImageName){
 
 window.onload = () => {
 
-
-
-
   setup('cat')
+
 }
